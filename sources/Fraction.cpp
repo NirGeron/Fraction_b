@@ -1,20 +1,19 @@
-#include "Fraction.hpp"
-
 #include <iostream>
 #include <stdexcept>
+#include "Fraction.hpp"
 #include <limits>
-using namespace ariel;
 using namespace std;
-#define MAX_INT  std::numeric_limits<int>::max()
-#define MIN_INT  std::numeric_limits<int>::min()
-
-Fraction::Fraction() : numerator(0), denominator(1) {
-}
+using namespace ariel;
+#define MIN std::numeric_limits<int>::min()
+#define MAX std::numeric_limits<int>::max()
 
 Fraction::Fraction(float numerator_){
-    this->numerator = (numerator_ * 1000);
     this->denominator = 1000;
+    this->numerator = numerator_ * 1000; // convert the float to an integer
 
+}
+
+Fraction::Fraction() : numerator(0), denominator(1) {
 }
 
 Fraction::Fraction(int numerator_, int denominator_):numerator(numerator_),denominator(denominator_) {
@@ -29,6 +28,7 @@ Fraction::Fraction(int numerator_, int denominator_):numerator(numerator_),denom
     }
 }
 
+//reduce the franc 
 Fraction Fraction::reduce() {
     
     int reduced = Fraction::reduced(numerator, denominator);
@@ -45,15 +45,14 @@ int Fraction::reduced(int numerator_temp, int denominator_temp) {
 
 }
 
+// helper function check str 
 bool Fraction::number_check(std::string input){
     size_t itr=0;
-    bool pos=true;
-    if(input[0] != '-')
-    {
-        pos=false;
+    bool pos=false;
+    if(input[0] != '-'){
+        pos=true;
         itr=1;
     }
- 
     for(size_t i = itr ; i < input.length() ; i++)
     {
         if(!std::isdigit(input[i])){
@@ -64,7 +63,7 @@ bool Fraction::number_check(std::string input){
 }
 
 int Fraction::addOverflow(int temp, int temp_2)const{
-    if ( (temp > MAX_INT - temp_2 && temp_2 > 0 ) || (temp < MIN_INT - temp_2 && temp_2 < 0)){
+    if ( (temp > MAX - temp_2 && temp_2 > 0 ) || (temp < MIN - temp_2 && temp_2 < 0)){
         throw std::overflow_error("ERR - Overflow");
         }
     else {
@@ -73,7 +72,7 @@ int Fraction::addOverflow(int temp, int temp_2)const{
 }
 
 int Fraction::subOverflow(int temp, int temp_2)const{
-    if ( (temp > MAX_INT + temp_2 && temp_2 < 0)||  (temp < MIN_INT + temp_2 && temp_2 > 0) ){
+    if ( (temp > MAX + temp_2 && temp_2 < 0)||  (temp < MIN + temp_2 && temp_2 > 0) ){
         throw std::overflow_error("ERR - Overflow");
     }
     else {
@@ -82,7 +81,7 @@ int Fraction::subOverflow(int temp, int temp_2)const{
 }
 int Fraction::mulOverflow(int temp, int temp_2)const{
     long long num = static_cast<long long>(temp) * temp_2;
-    if ((num < MIN_INT) || (num > MAX_INT)) {
+    if ((num < MIN) || (num > MAX)) {
         throw std::overflow_error("ERR - Overflow");
     }else {
         return temp * temp_2;
@@ -197,6 +196,7 @@ Fraction Fraction::operator-(const Fraction& frac) const {
 }
 
 Fraction ariel::operator-(const Fraction& frac, float numerator_temp) {
+     // Convert the number to a fraction
     Fraction frac_(numerator_temp);
     return (frac-frac_).reduce();
 }
